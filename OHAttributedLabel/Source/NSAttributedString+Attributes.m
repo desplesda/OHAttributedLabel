@@ -88,6 +88,12 @@
     return sz;
 }
 
+- (NSURL*)linkAtIndex:(NSUInteger)index effectiveRange:(NSRangePointer)aRange
+{
+    NSURL* attr = [self attribute:@"__link" atIndex:index effectiveRange:aRange];
+    return attr;
+}
+
 -(CTFontRef)fontAtIndex:(NSUInteger)index effectiveRange:(NSRangePointer)aRange
 {
     id attr = [self attribute:(BRIDGE_CAST NSString*)kCTFontAttributeName atIndex:index effectiveRange:aRange];
@@ -202,6 +208,15 @@
 	// kCTForegroundColorAttributeName
 	[self removeAttribute:(BRIDGE_CAST NSString*)kCTForegroundColorAttributeName range:range]; // Work around for Apple leak
 	[self addAttribute:(BRIDGE_CAST NSString*)kCTForegroundColorAttributeName value:(BRIDGE_CAST id)color.CGColor range:range];
+}
+
+- (void) setLink:(NSURL *)link {
+    [self setLink:link range:NSMakeRange(0, [self length])];
+}
+
+- (void) setLink:(NSURL*)link range:(NSRange)range {
+    [self removeAttribute:@"__link" range:range];
+    [self addAttribute:@"__link" value:link range:range];
 }
 
 -(void)setTextIsUnderlined:(BOOL)underlined

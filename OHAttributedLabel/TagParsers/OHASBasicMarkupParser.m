@@ -44,7 +44,33 @@
                 NSMutableAttributedString* foundString = [[str attributedSubstringFromRange:textRange] mutableCopy];
                 [foundString setTextColor:color];
                 return [foundString autorelease];
+            }, @"\\{\\((.*?)\\|(.*?)\\)\\}",
+            
+            ^NSAttributedString*(NSAttributedString* str, NSTextCheckingResult* match) {
+                NSString* linkText = [str attributedSubstringFromRange:[match rangeAtIndex:1]].string;
+                NSURL* link = [NSURL URLWithString:linkText];
+                
+                NSRange textRange = [match rangeAtIndex:2];
+                NSMutableAttributedString* foundString = [[str attributedSubstringFromRange:textRange] mutableCopy];
+                [foundString setLink:link];
+                
+                
+                return [foundString autorelease];
+            }, @"\\((.*?)\\|(.*?)\\)",
+            
+            
+            ^NSAttributedString*(NSAttributedString* str, NSTextCheckingResult* match) {
+                NSString* linkText = [str attributedSubstringFromRange:[match rangeAtIndex:1]].string;
+                NSURL* link = [NSURL URLWithString:linkText];
+                
+                NSRange textRange = [match rangeAtIndex:2];
+                NSMutableAttributedString* foundString = [[str attributedSubstringFromRange:textRange] mutableCopy];
+                [foundString setLink:link];
+                
+                
+                return [foundString autorelease];
             }, @"\\{(.*?)\\|(.*?)\\}",
+            
             
             nil];
 }

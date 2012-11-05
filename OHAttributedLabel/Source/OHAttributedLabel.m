@@ -205,6 +205,19 @@ NSDataDetector* sharedReusableDataDetector(NSTextCheckingTypes types)
 -(void)recomputeLinksInTextIfNeeded
 {
     if (!_needsRecomputeLinksInText) return;
+    
+    
+    // Add all custom links
+    [_attributedText enumerateAttributesInRange:NSMakeRange(0, _attributedText.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
+        
+        NSURL* url = [attrs objectForKey:@"__link"];
+        
+        if (url) {
+            [self addCustomLink:url inRange:range];
+        }
+        
+    }];
+    
     _needsRecomputeLinksInText = NO;
     
     if (!_attributedText || (self.automaticallyAddLinksForType == 0 && _customLinks.count == 0))

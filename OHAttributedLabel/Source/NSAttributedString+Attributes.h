@@ -43,6 +43,9 @@
 //! Note: Use CGFLOAT_MAX for the CGSize's height if you don't want a constraint for the height.
 -(CGSize)sizeConstrainedToSize:(CGSize)maxSize fitRange:(NSRange*)fitRange;
 
+
+- (NSURL*)linkAtIndex:(NSUInteger)index effectiveRange:(NSRangePointer)aRange;
+
 -(CTFontRef)fontAtIndex:(NSUInteger)index effectiveRange:(NSRangePointer)aRange;
 -(UIColor*)textColorAtIndex:(NSUInteger)index effectiveRange:(NSRangePointer)aRange;
 -(BOOL)textIsUnderlinedAtIndex:(NSUInteger)index effectiveRange:(NSRangePointer)aRange;
@@ -63,6 +66,9 @@
 -(void)setFontName:(NSString*)fontName size:(CGFloat)size;
 -(void)setFontName:(NSString*)fontName size:(CGFloat)size range:(NSRange)range;
 -(void)setFontFamily:(NSString*)fontFamily size:(CGFloat)size bold:(BOOL)isBold italic:(BOOL)isItalic range:(NSRange)range;
+
+- (void) setLink:(NSURL *)link;
+- (void) setLink:(NSURL*)link range:(NSRange)range;
 
 -(void)setTextColor:(UIColor*)color;
 -(void)setTextColor:(UIColor*)color range:(NSRange)range;
