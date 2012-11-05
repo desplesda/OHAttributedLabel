@@ -7,6 +7,7 @@
 //
 
 #import "OHASMarkupParserBase.h"
+#import "NSAttributedString+Attributes.h"
 
 @interface OHASMarkupParserBase ()
 +(NSDictionary*)tagMappings; // To be overloaded by subclasses
@@ -41,16 +42,29 @@
               [mutAttrString replaceCharactersInRange:offsetRange withAttributedString:repl];
               offset += result.range.length - repl.length;
           }];
+#if ! __has_feature(objc_arc)
          [processedString release];
+#endif
      }];
 
 }
 
 +(NSAttributedString*)attributedStringByProcessingMarkupInAttributedString:(NSAttributedString*)attrString
 {
-    __block NSMutableAttributedString* mutAttrString = [attrString mutableCopy];
+    NSMutableAttributedString* mutAttrString = [attrString mutableCopy];
     [self processMarkupInAttributedString:mutAttrString];
+#if ! __has_feature(objc_arc)
     return [mutAttrString autorelease];
+#else
+    return mutAttrString;
+#endif
+}
+
++(NSAttributedString*)attributedStringByProcessingMarkupInString:(NSString*)string
+{
+    NSMutableAttributedString* mutAttrString = [NSMutableAttributedString attributedStringWithString:string];
+    [self processMarkupInAttributedString:mutAttrString];
+    return mutAttrString;
 }
 
 @end

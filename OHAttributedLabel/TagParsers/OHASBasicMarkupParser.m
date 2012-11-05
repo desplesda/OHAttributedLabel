@@ -9,6 +9,12 @@
 #import "OHASBasicMarkupParser.h"
 #import "NSAttributedString+Attributes.h"
 
+#if __has_feature(objc_arc)
+#define MRC_AUTORELEASE(x) (x)
+#else
+#define MRC_AUTORELEASE(x) [(x) autorelease]
+#endif
+
 @implementation OHASBasicMarkupParser
 
 +(NSDictionary*)tagMappings
@@ -18,23 +24,23 @@
             ^NSAttributedString*(NSAttributedString* str, NSTextCheckingResult* match) {
                 NSRange textRange = [match rangeAtIndex:1];
                 NSMutableAttributedString* foundString = [[str attributedSubstringFromRange:textRange] mutableCopy];
-                [foundString setTextBold:YES range:NSMakeRange(0,textRange.length)];
-                return [foundString autorelease];
+                if (textRange.length>0) [foundString setTextBold:YES range:NSMakeRange(0,textRange.length)];
+                return MRC_AUTORELEASE(foundString);
             }, @"\\*(.*?)\\*",
             
             ^NSAttributedString*(NSAttributedString* str, NSTextCheckingResult* match) {
                 NSRange textRange = [match rangeAtIndex:1];
                 NSMutableAttributedString* foundString = [[str attributedSubstringFromRange:textRange] mutableCopy];
-                [foundString setTextIsUnderlined:YES];
-                return [foundString autorelease];
+                if (textRange.length>0) [foundString setTextIsUnderlined:YES];
+                return MRC_AUTORELEASE(foundString);
             }, @"_(.*?)_",
             
             ^NSAttributedString*(NSAttributedString* str, NSTextCheckingResult* match) {
                 NSRange textRange = [match rangeAtIndex:1];
                 NSMutableAttributedString* foundString = [[str attributedSubstringFromRange:textRange] mutableCopy];
                 CTFontRef font = [str fontAtIndex:textRange.location effectiveRange:NULL];
-                [foundString setFontName:@"Courier" size:CTFontGetSize(font)];
-                return [foundString autorelease];
+                if (textRange.length>0) [foundString setFontName:@"Courier" size:CTFontGetSize(font)];
+                return MRC_AUTORELEASE(foundString);
             }, @"`(.*?)`",
             
             ^NSAttributedString*(NSAttributedString* str, NSTextCheckingResult* match) {
@@ -42,8 +48,10 @@
                 UIColor* color = UIColorFromString(colorName);
                 NSRange textRange = [match rangeAtIndex:2];
                 NSMutableAttributedString* foundString = [[str attributedSubstringFromRange:textRange] mutableCopy];
-                [foundString setTextColor:color];
-                return [foundString autorelease];
+                
+                if (textRange.length>0) [foundString setTextColor:color];
+                return MRC_AUTORELEASE(foundString);
+                
             }, @"\\{\\((.*?)\\|(.*?)\\)\\}",
             
             ^NSAttributedString*(NSAttributedString* str, NSTextCheckingResult* match) {
